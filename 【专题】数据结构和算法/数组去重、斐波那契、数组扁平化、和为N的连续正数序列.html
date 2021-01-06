@@ -1,0 +1,155 @@
+<!DOCTYPE html><html><head><title>数组去重和排序的多种实现算法</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: "Helvetica Neue", Arial, "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<h4 id="数组去重和排序的多种实现算法">数组去重和排序的多种实现算法</h4>
+
+<blockquote>
+  <p>数组去重 <br>
+  <a href="https://blog.csdn.net/weixin_42412046/article/details/81459294" target="_blank">https://blog.csdn.net/weixin_42412046/article/details/81459294</a></p>
+</blockquote>
+
+<ul><li><p>indexOf / includes</p></li>
+<li><p>双循环</p></li>
+<li><p>先排序，在相邻比较（基于正则）</p></li>
+</ul>
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-keyword">let</span> ary = [<span class="hljs-number">12</span>, <span class="hljs-number">23</span>, <span class="hljs-number">12</span>, <span class="hljs-number">15</span>, <span class="hljs-number">25</span>, <span class="hljs-number">23</span>, <span class="hljs-number">25</span>, <span class="hljs-number">14</span>, <span class="hljs-number">16</span>];
+</div><div class="hljs-line">ary.sort(<span class="hljs-function">(<span class="hljs-params">a, b</span>) =&gt;</span> a - b);
+</div><div class="hljs-line"><span class="hljs-keyword">let</span> str = ary.join(<span class="hljs-string">'@'</span>) + <span class="hljs-string">'@'</span>;
+</div><div class="hljs-line"><span class="hljs-keyword">let</span> reg = <span class="hljs-regexp">/(\d+@)\1*/g</span>;
+</div><div class="hljs-line">ary = [];
+</div><div class="hljs-line">str.replace(reg, (n, m) =&gt; {
+</div><div class="hljs-line">    m = <span class="hljs-built_in">Number</span>(m.slice(<span class="hljs-number">0</span>, m.length - <span class="hljs-number">1</span>));
+</div><div class="hljs-line">    ary.push(m);
+</div><div class="hljs-line">});
+</div><div class="hljs-line"><span class="hljs-built_in">console</span>.log(ary);
+</div></code></pre>
+
+<ul><li><p>对象键值对</p></li>
+<li><p>Set</p></li>
+</ul>
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-keyword">let</span> ary = [<span class="hljs-number">12</span>, <span class="hljs-number">23</span>, <span class="hljs-number">12</span>, <span class="hljs-number">15</span>, <span class="hljs-number">25</span>, <span class="hljs-number">23</span>, <span class="hljs-number">25</span>, <span class="hljs-number">14</span>, <span class="hljs-number">16</span>];
+</div><div class="hljs-line">ary = [...new <span class="hljs-built_in">Set</span>(ary)];
+</div><div class="hljs-line"><span class="hljs-built_in">console</span>.log(ary);
+</div></code></pre>
+
+<h4 id="数组扁平化的n种实现方案">数组扁平化的N种实现方案</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-keyword">let</span> arr = [
+</div><div class="hljs-line">    [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>],
+</div><div class="hljs-line">    [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">5</span>],
+</div><div class="hljs-line">    [<span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, [<span class="hljs-number">11</span>, <span class="hljs-number">12</span>, [<span class="hljs-number">12</span>, <span class="hljs-number">13</span>, [<span class="hljs-number">14</span>]]]], <span class="hljs-number">10</span>
+</div><div class="hljs-line">];
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment">//=&gt;使用ES6中提供的 Array.prototype.flat 处理</span>
+</div><div class="hljs-line"><span class="hljs-comment">// arr = arr.flat(Infinity);</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment">//=&gt;把数组直接变为字符串即可（数组TOSTRING之后，不管你有多少级，最后都会变为以逗号分隔的字符串，没有中括号和所谓的层级了），相当于直接的扁平化了</span>
+</div><div class="hljs-line"><span class="hljs-comment">// arr = arr.toString().split(',').map(item =&gt; {</span>
+</div><div class="hljs-line"><span class="hljs-comment">//  return Number(item);</span>
+</div><div class="hljs-line"><span class="hljs-comment">// });</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment">//=&gt;JSON.stringify也可以扁平化数组</span>
+</div><div class="hljs-line"><span class="hljs-comment">// arr = JSON.stringify(arr).replace(/(\[|\])/g, '').split(',').map(item =&gt; Number(item));</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment">//=&gt;基于数组的some方法进行判断检测：验证数组中的某一项有没有符合函数中提供的规则的</span>
+</div><div class="hljs-line"><span class="hljs-comment">// while (arr.some(item =&gt; Array.isArray(item))) {</span>
+</div><div class="hljs-line"><span class="hljs-comment">//  arr = [].concat(...arr);</span>
+</div><div class="hljs-line"><span class="hljs-comment">// }</span>
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line"><span class="hljs-comment">//=&gt;自己递归处理</span>
+</div><div class="hljs-line">~ <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+</div><div class="hljs-line">    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFlat</span>(<span class="hljs-params"></span>) </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">let</span> result = [],
+</div><div class="hljs-line">            _this = <span class="hljs-keyword">this</span>;
+</div><div class="hljs-line">        <span class="hljs-comment">//=&gt;循环ARR中的每一项，把不是数组的存储到新数组中</span>
+</div><div class="hljs-line">        <span class="hljs-keyword">let</span> fn = <span class="hljs-function">(<span class="hljs-params">arr</span>) =&gt;</span> {
+</div><div class="hljs-line">            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; arr.length; i++) {
+</div><div class="hljs-line">                <span class="hljs-keyword">let</span> item = arr[i];
+</div><div class="hljs-line">                <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Array</span>.isArray(item)) {
+</div><div class="hljs-line">                    fn(item);
+</div><div class="hljs-line">                    <span class="hljs-keyword">continue</span>;
+</div><div class="hljs-line">                }
+</div><div class="hljs-line">                result.push(item);
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        };
+</div><div class="hljs-line">        fn(_this);
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> result;
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-built_in">Array</span>.prototype.myFlat = myFlat;
+</div><div class="hljs-line">}();
+</div><div class="hljs-line">arr = arr.myFlat();
+</div></code></pre>
+
+<h4 id="阿里面试题之斐波那契数列">阿里面试题之斐波那契数列</h4>
+
+<p>请实现一个fibonacci [ˌfɪbəˈnɑːtʃi] 函数，要求实现以下的功能： <br>
+斐波那契数列为：[1,1,2,3,5,8,13,21,…] <br>
+fibonacci(0) -&gt; 1 <br>
+fibonacci(4) -&gt; 5 <br>
+……</p>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fibonacci</span>(<span class="hljs-params">count</span>) </span>{
+</div><div class="hljs-line">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fn</span>(<span class="hljs-params">count, curr = <span class="hljs-number">1</span>, next = <span class="hljs-number">1</span></span>) </span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">if</span> (count == <span class="hljs-number">0</span>) {
+</div><div class="hljs-line">      <span class="hljs-keyword">return</span> curr;
+</div><div class="hljs-line">    } <span class="hljs-keyword">else</span> {
+</div><div class="hljs-line">      <span class="hljs-keyword">return</span> fn(count - <span class="hljs-number">1</span>, next, curr + next);
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">  };
+</div><div class="hljs-line">  <span class="hljs-keyword">return</span> fn(count);
+</div><div class="hljs-line">}
+</div></code></pre>
+
+<h4 id="输出所有和为n的连续正数序列">输出所有和为N的连续正数序列</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment">/*</span>
+</div><div class="hljs-line"><span class="hljs-comment"> * 输入一个正数N，输出所有和为N的连续正数序列</span>
+</div><div class="hljs-line"><span class="hljs-comment"> * 例如：输入15</span>
+</div><div class="hljs-line"><span class="hljs-comment"> * 结果：[[1,2,3,4,5],[4,5,6],[7,8]]</span>
+</div><div class="hljs-line"><span class="hljs-comment"> */</span>
+</div><div class="hljs-line"> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createArr</span>(<span class="hljs-params">n,len</span>)</span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">let</span> arr=<span class="hljs-keyword">new</span> <span class="hljs-built_in">Array</span>(len).fill(<span class="hljs-literal">null</span>),
+</div><div class="hljs-line">        temp=[];
+</div><div class="hljs-line">    arr[<span class="hljs-number">0</span>]=n;
+</div><div class="hljs-line">    arr=arr.map(<span class="hljs-function">(<span class="hljs-params">item,index</span>)=&gt;</span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">if</span>(item===<span class="hljs-literal">null</span>){
+</div><div class="hljs-line">            item=temp[index<span class="hljs-number">-1</span>]+<span class="hljs-number">1</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        temp.push(item);
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> item;
+</div><div class="hljs-line">    });
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> arr;
+</div><div class="hljs-line">}
+</div><div class="hljs-line"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fn</span>(<span class="hljs-params">count</span>)</span>{
+</div><div class="hljs-line">    <span class="hljs-keyword">let</span> result=[];
+</div><div class="hljs-line">    <span class="hljs-comment">//=&gt;求出中间值</span>
+</div><div class="hljs-line">    <span class="hljs-keyword">let</span> middle=<span class="hljs-built_in">Math</span>.ceil(count/<span class="hljs-number">2</span>);
+</div><div class="hljs-line">    <span class="hljs-comment">//从1开始累加</span>
+</div><div class="hljs-line">    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> i=<span class="hljs-number">1</span>;i&lt;=middle;i++){
+</div><div class="hljs-line">        <span class="hljs-comment">//控制累加多少次</span>
+</div><div class="hljs-line">        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> j=<span class="hljs-number">2</span>;;j++){
+</div><div class="hljs-line">            <span class="hljs-comment">//求出累加多次的和</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> total=(i+(i+j<span class="hljs-number">-1</span>))*(j/<span class="hljs-number">2</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span>(total&gt;count){
+</div><div class="hljs-line">                <span class="hljs-keyword">break</span>;
+</div><div class="hljs-line">            }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(total===count){
+</div><div class="hljs-line">                result.push(createArr(i,j));
+</div><div class="hljs-line">                <span class="hljs-keyword">break</span>;
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> result;
+</div><div class="hljs-line">}
+</div></code></pre></div></body></html>
